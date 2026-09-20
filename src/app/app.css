@@ -1,0 +1,156 @@
+:host { display: block; min-height: 100vh; }
+
+/* ---------- top bar ---------- */
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  flex-wrap: wrap;
+  padding: 16px clamp(16px, 4vw, 40px);
+  background: var(--ink);
+  color: #eef2f3;
+  border-bottom: 3px solid var(--brass);
+}
+
+.brand { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.brand h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #f4dfb5;
+}
+.brand p { margin: 0; font-size: 15px; color: #a9bbc3; }
+
+.refresh { display: flex; align-items: center; gap: 12px; }
+.ring { flex: none; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 3; }
+.ring .track { stroke: rgba(255, 255, 255, 0.18); }
+.ring .sweep {
+  stroke: #e1b25c;
+  stroke-linecap: round;
+  stroke-dasharray: 81.68;
+  stroke-dashoffset: 81.68;
+  animation-name: sweep;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+.refresh.paused .sweep { animation-play-state: paused; }
+@keyframes sweep { from { stroke-dashoffset: 81.68; } to { stroke-dashoffset: 0; } }
+
+.when { display: flex; flex-direction: column; font-size: 14px; line-height: 1.35; }
+.when strong { font-weight: 600; }
+.when span { color: #a9bbc3; font-variant-numeric: tabular-nums; }
+
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid #8fb4ff; outline-offset: 2px; }
+
+.ghost {
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+  color: #eef2f3;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+.ghost:hover { background: rgba(255, 255, 255, 0.12); }
+
+/* ---------- sections ---------- */
+main {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 28px clamp(16px, 4vw, 40px) 48px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px;
+}
+
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 24px; flex-wrap: wrap; margin-bottom: 14px; }
+.section-head h2 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 28px; }
+.section-head p { margin: 0; color: var(--ink-soft); font-size: 15px; max-width: 60ch; }
+
+/* ---------- 3D stage ---------- */
+.stage-head { align-items: center; }
+.controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.chips { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--card); }
+.chips button {
+  padding: 8px 14px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s, color 0.15s;
+}
+.chips button:last-child { border-right: 0; }
+.chips button:hover { background: #eef2f4; }
+.chips button.on { background: var(--ink); color: #fff; }
+.chips button:focus-visible { outline-offset: -3px; }
+.count {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(23, 36, 43, 0.12);
+  font-size: 12.5px;
+  line-height: 20px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.chips .on .count { background: rgba(255, 255, 255, 0.22); }
+
+.ghost.light { color: var(--ink); border-color: var(--line); background: var(--card); }
+.ghost.light:hover { background: #eef2f4; }
+
+.canvas-wrap {
+  height: clamp(440px, 72vh, 760px);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #0d171c;
+}
+.canvas-wrap app-parking-scene { height: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ring .sweep { animation: none; stroke-dashoffset: 0; }
+}
+
+@media (max-width: 640px) {
+  .brand h1 { font-size: 28px; }
+  .section-head h2 { font-size: 24px; }
+  .chips { flex-wrap: wrap; }
+}
+
+.demo-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.reset-demo-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #1f6feb;
+  color: white;
+  transition: 0.2s ease;
+}
+
+.reset-demo-btn:hover {
+  background: #1557b0;
+}
+
+.reset-demo-btn:active {
+  transform: scale(0.97);
+}

@@ -1,0 +1,25 @@
+:root {
+  --ink: #17242b;
+  --ink-soft: #4b5c66;
+  --fog: #e9edef;
+  --card: #ffffff;
+  --line: #d3dbe0;
+  --brass: #a8772e;
+  --brass-soft: #f3e8d2;
+  --lapis: #2f5da8;
+  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background: var(--fog);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}

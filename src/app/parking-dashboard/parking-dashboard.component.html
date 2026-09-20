@@ -1,0 +1,136 @@
+<div class="dashboard">
+
+  <header class="dashboard__header">
+    <div class="dashboard__crest">GH</div>
+    <div>
+      <h1>The Grand Meridian — Valet Command</h1>
+      <p>Live vehicle check-in, retrieval and floor tracking</p>
+    </div>
+  </header>
+
+  <!-- ============ TOP SECTION ============ -->
+  <section class="control-strip">
+
+    <div class="details-panel">
+      <ng-container *ngIf="selectedVehicle as v; else fleetOverview">
+        <div class="details-panel__title">
+          <h2>{{ v.model }}</h2>
+          <span class="status-chip" [ngClass]="'status-chip--' + statusClass(v.status)">{{ v.status }}</span>
+        </div>
+        <dl class="details-panel__grid">
+          <div><dt>Plate</dt><dd>{{ v.plateNumber }}</dd></div>
+          <div><dt>Guest</dt><dd>{{ v.guestName }}</dd></div>
+          <div><dt>Room</dt><dd>{{ v.roomNumber }}</dd></div>
+          <div><dt>Color</dt><dd>{{ v.color }}</dd></div>
+          <div><dt>Checked in</dt><dd>{{ v.checkInTime }}</dd></div>
+          <div><dt>Valet</dt><dd>{{ v.assignedValet || '—' }}</dd></div>
+        </dl>
+        <div class="progress">
+          <div class="progress__track">
+            <div class="progress__fill" [style.width.%]="routeProgressPercent(v)"></div>
+          </div>
+          <span class="progress__label">{{ v.route[v.routeIndex].label }}</span>
+        </div>
+        <button
+          class="btn btn--primary"
+          *ngIf="v.status === 'Parked'"
+          (click)="requestVehicle(v)">
+          Request vehicle to reception
+        </button>
+      </ng-container>
+
+      <ng-template #fleetOverview>
+        <div class="details-panel__title">
+          <h2>Fleet overview</h2>
+        </div>
+        <div class="fleet-overview">
+          <div class="fleet-overview__stat">
+            <span class="fleet-overview__count">{{ fleetSummary.Parked }}</span>
+            <span>Parked</span>
+          </div>
+          <div class="fleet-overview__stat">
+            <span class="fleet-overview__count">{{ fleetSummary['In Transit'] }}</span>
+            <span>In transit</span>
+          </div>
+          <div class="fleet-overview__stat">
+            <span class="fleet-overview__count">{{ fleetSummary.Arrived }}</span>
+            <span>At reception</span>
+          </div>
+        </div>
+        <p class="fleet-overview__hint">Select a vehicle to view its live details and request retrieval.</p>
+      </ng-template>
+    </div>
+
+    <div class="control-strip__actions">
+      <label for="vehicle-select">View vehicle</label>
+      <select
+        id="vehicle-select"
+        [ngModel]="selectedVehicleId"
+        (ngModelChange)="onVehicleSelected($event)">
+        <option value="all">All vehicles</option>
+        <option *ngFor="let v of vehicles" [value]="v.id">
+          {{ v.plateNumber }} — {{ v.guestName }}
+        </option>
+      </select>
+
+      <button class="btn btn--ghost" (click)="reset()">Reset demo</button>
+    </div>
+  </section>
+
+  <!-- ============ MAIN SECTION: 3D TOWER VIEW ============ -->
+  <section class="tower" aria-label="Parking structure live view">
+    <div
+      class="tower__deck"
+      *ngFor="let floor of floors"
+      [ngClass]="{
+        'tower__deck--ramp': floor.type === 'ramp',
+        'tower__deck--lobby': floor.type === 'lobby'
+      }">
+
+      <div class="tower__deck-label">{{ floor.name }}</div>
+
+      <div class="tower__surface">
+        <div
+          class="tower__spot"
+          *ngFor="let spot of floor.spots"
+          [style.left.%]="spot.position.x"
+          [style.top.%]="spot.position.y">
+        </div>
+
+        <div
+          class="tower__vehicle"
+          *ngFor="let vehicle of vehiclesOnFloor(floor.id)"
+          [ngClass]="'tower__vehicle--' + statusClass(vehicle.status)"
+          [style.left.%]="vehicle.currentPosition.x"
+          [style.top.%]="vehicle.currentPosition.y"
+          [title]="vehicle.plateNumber + ' — ' + vehicle.guestName">
+          <span class="tower__vehicle-dot"></span>
+          <span class="tower__vehicle-tag">{{ vehicle.plateNumber }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FLEET LEGEND / QUICK ACTIONS ============ -->
+  <section class="fleet-legend">
+    <div class="fleet-legend__row" *ngFor="let v of vehicles">
+      <span class="status-dot" [ngClass]="'status-dot--' + statusClass(v.status)"></span>
+      <span class="fleet-legend__plate">{{ v.plateNumber }}</span>
+      <span class="fleet-legend__guest">{{ v.guestName }}</span>
+      <span class="fleet-legend__status">{{ v.status }}</span>
+      <button
+        class="btn btn--small"
+        *ngIf="v.status === 'Parked'"
+        (click)="requestVehicle(v)">
+        Request
+      </button>
+      <button
+        class="btn btn--small btn--ghost"
+        *ngIf="v.status !== 'Parked'"
+        (click)="onVehicleSelected(v.id)">
+        Track
+      </button>
+    </div>
+  </section>
+
+</div>

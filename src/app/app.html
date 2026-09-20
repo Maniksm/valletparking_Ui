@@ -1,0 +1,78 @@
+<header class="bar">
+  <div class="brand">
+    <h1>Grand Hotel</h1>
+    <p>Parking movement</p>
+  </div>
+
+
+  <div class="refresh" [class.paused]="paused()">
+    <svg class="ring" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+      <circle class="track" cx="16" cy="16" r="13" />
+      @for (t of [tick()]; track t) {
+        <circle class="sweep" cx="16" cy="16" r="13" [style.animation-duration.ms]="refreshMs" />
+      }
+    </svg>
+    <div class="when" aria-live="polite">
+      <strong>{{ paused() ? 'Updates paused' : 'Updates every 5 seconds' }}</strong>
+      <span>
+        @if (lastUpdate(); as t) {
+          Last update {{ t.toLocaleTimeString() }}
+        } @else {
+          Waiting for first update
+        }
+      </span>
+    </div>
+    <button type="button" class="ghost" (click)="togglePause()">{{ paused() ? 'Resume' : 'Pause' }}</button>
+  </div>
+</header>
+
+<main>
+  <section class="details" aria-labelledby="details-title">
+    <div class="section-head">
+      <h2 id="details-title">Vehicle details</h2>
+      <p>
+        {{ summary().total }} vehicles tracked, {{ summary().parked }} parked and {{ summary().moving }} moving.
+        Select a vehicle to find it in the 3D view.
+      </p>
+    </div>
+    <app-vehicle-table
+      [vehicles]="vehicles()"
+      [selectedId]="selectedId()"
+      [movedIds]="movedIds()"
+      [tick]="tick()"
+      (picked)="selectVehicle($event)"
+    />
+  </section>
+
+  <section class="stage" aria-labelledby="stage-title">
+    <div class="section-head stage-head">
+      <h2 id="stage-title">Parking floors</h2>
+      <div class="controls">
+        <div class="chips" role="group" aria-label="Show floor">
+          <button type="button" [class.on]="floorFilter() === 'all'" [attr.aria-pressed]="floorFilter() === 'all'" (click)="setFloor('all')">
+            All floors
+          </button>
+          @for (f of floors; track f.index) {
+            <button type="button" [class.on]="floorFilter() === f.index" [attr.aria-pressed]="floorFilter() === f.index" (click)="setFloor(f.index)">
+              {{ f.name }}
+              <span class="count">{{ floorCounts()[f.index] }}</span>
+            </button>
+          }
+        </div>
+        <button type="button" class="ghost light" (click)="resetView()">Reset view</button>
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <app-parking-scene
+        [vehicles]="vehicles()"
+        [selectedId]="selectedId()"
+        [floorFilter]="floorFilter()"
+        [reservedSlots]="reservedSlots"
+        [animMs]="refreshMs * 0.9"
+        [resetTick]="resetTick()"
+        (vehicleClicked)="selectVehicle($event)"
+      />
+    </div>
+  </section>
+</main>

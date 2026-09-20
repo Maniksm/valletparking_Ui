@@ -1,0 +1,57 @@
+<div class="scroll">
+  <table>
+    <caption class="sr-only">Vehicles currently tracked in the parking</caption>
+    <thead>
+      <tr>
+        <th scope="col">Vehicle</th>
+        <th scope="col">Guest</th>
+        <th scope="col">Floor</th>
+        <th scope="col">Slot</th>
+        <th scope="col">Status</th>
+        <th scope="col" class="num">X (m)</th>
+        <th scope="col" class="num">Y (m)</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (v of vehicles(); track v.id) {
+        <tr
+          [class.selected]="v.id === selectedId()"
+          [attr.aria-selected]="v.id === selectedId()"
+          tabindex="0"
+          (click)="picked.emit(v.id)"
+          (keydown.enter)="picked.emit(v.id)"
+          (keydown.space)="picked.emit(v.id); $event.preventDefault()"
+        >
+          <td>
+            <span class="car">
+              <i class="swatch" [style.background]="v.color"></i>
+              <span class="stack">
+                <strong class="plate">{{ v.plate }}</strong>
+                <span class="sub">{{ v.colorName }} {{ v.type }}</span>
+              </span>
+            </span>
+          </td>
+          <td>
+            <span class="stack">
+              <span>{{ v.guest }}</span>
+              <span class="sub">{{ v.room }}</span>
+            </span>
+          </td>
+          <td>{{ floorName(v.floor) }}</td>
+          <td>
+            @if (v.slot) {
+              <strong class="slot">{{ v.slot }}</strong>
+            } @else {
+              <span class="sub">On the move</span>
+            }
+          </td>
+          <td><span class="pill" [attr.data-status]="v.status">{{ v.status }}</span></td>
+          @for (t of [tick()]; track t) {
+            <td class="num pos" [class.moved]="movedIds().has(v.id)">{{ v.x | number: '1.1-1' }}</td>
+            <td class="num pos" [class.moved]="movedIds().has(v.id)">{{ v.y | number: '1.1-1' }}</td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
