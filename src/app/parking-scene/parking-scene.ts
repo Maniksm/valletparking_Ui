@@ -67,7 +67,6 @@ function mulberry32(seed: number) {
         <span><i class="key tracked"></i>Tracked vehicle</span>
         <span><i class="key other"></i>Other parked car</span>
       </div>
-      <p class="hint">Drag to rotate, scroll to zoom, click a car to select it</p>
     </div>
   `,
   styleUrl: './parking-scene.css',
